@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajouter Produit</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .container {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 400px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #6a82fb;
+      box-shadow: 0 0 6px rgba(106, 130, 251, 0.5);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #6a82fb, #fc5c7d);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #5c6bc0, #f06292);
+      transform: scale(1.02);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: #4caf50;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ajouter un produit</h1>
+    <form id="productForm">
+      <input type="text" id="name" placeholder="Nom du produit" required />
+      <input type="text" id="description" placeholder="Description" />
+      <button type="submit">Ajouter</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('productForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const description = document.getElementById('description').value.trim();
+
+      if (!name) {
+        messageDiv.textContent = "Le nom est requis.";
+        messageDiv.style.color = "red";
+        return;
+      }
+
+      const query = `
+        mutation CreateProduct($name: String!, $description: String) {
+          createProduct(name: $name, description: $description) {
+            id
+            name
+            description
+          }
+        }`;
+
+      try {
+        const res = await fetch('http://localhost:4000/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, variables: { name, description } })
+        });
+
+        const result = await res.json();
+
+        if (result.errors) {
+          messageDiv.textContent = "Erreur: " + result.errors[0].message;
+          messageDiv.style.color = "red";
+          return;
+        }
+
+        const produit = result.data.createProduct;
+        messageDiv.textContent = `✔ Produit "${produit.name}" ajouté avec succès !`;
+        messageDiv.style.color = "#4caf50";
+        form.reset();
+      } catch (error) {
+        messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+        messageDiv.style.color = "red";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

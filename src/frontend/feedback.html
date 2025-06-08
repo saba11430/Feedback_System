@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajouter Feedback</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .container {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus {
+      border-color: #f857a6;
+      box-shadow: 0 0 6px rgba(248, 87, 166, 0.4);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #e96443, #904e95);
+      transform: scale(1.02);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: #4caf50;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ajouter Feedback</h1>
+    <form id="feedbackForm">
+      <input type="text" id="username" placeholder="Nom utilisateur" required />
+      <input type="text" id="productName" placeholder="Nom produit" required />
+      <input type="number" id="rating" placeholder="Note (1-5)" min="1" max="5" required />
+      <input type="text" id="comment" placeholder="Commentaire" />
+      <button type="submit">Envoyer</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const productName = document.getElementById('productName').value.trim();
+      const rating = parseInt(document.getElementById('rating').value);
+      const comment = document.getElementById('comment').value.trim();
+
+      const query = `
+        mutation CreateFeedbackByNames($username: String!, $productName: String!, $rating: Int!, $comment: String) {
+          createFeedback(username: $username, productName: $productName, rating: $rating, comment: $comment) {
+            id
+            username
+            productName
+            rating
+            comment
+            createdAt
+          }
+        }`;
+
+      try {
+        const response = await fetch('http://localhost:4000/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query,
+            variables: { username, productName, rating, comment }
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.errors) {
+          messageDiv.textContent = 'Erreur : ' + result.errors[0].message;
+          messageDiv.style.color = "red";
+        } else {
+          const feedback = result.data.createFeedback;
+          messageDiv.textContent = `✔ Feedback ajouté par ${feedback.username} pour "${feedback.productName}"`;
+          messageDiv.style.color = "#4caf50";
+          form.reset();
+        }
+      } catch (error) {
+        messageDiv.textContent = "Erreur réseau. Veuillez réessayer.";
+        messageDiv.style.color = "red";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

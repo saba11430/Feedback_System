@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Feedbacks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f1f9ff;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      border-radius: 10px;
+    }
+
+    strong {
+      color: #0056b3;
+    }
+
+    .no-feedback {
+      text-align: center;
+      font-style: italic;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Feedbacks</h1>
+    <ul id="feedbackList"></ul>
+  </div>
+
+  <script>
+    const query = `
+      query {
+        feedbacks {
+          id
+          username
+          productName
+          rating
+          comment
+          createdAt
+        }
+      }
+    `;
+
+    async function fetchFeedbacks() {
+      const res = await fetch("http://localhost:4000/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+
+      const result = await res.json();
+      console.log("Résultat GraphQL :", result); // Debug
+
+      const feedbacks = result.data?.feedbacks;
+      const list = document.getElementById("feedbackList");
+      list.innerHTML = "";
+
+      if (!feedbacks || feedbacks.length === 0) {
+        list.innerHTML = `<li class="no-feedback">Aucun feedback trouvé.</li>`;
+        return;
+      }
+
+      feedbacks.forEach(fb => {
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <strong>Produit :</strong> ${fb.productName} <br>
+          <strong>Note :</strong> ${fb.rating}/5<br>
+          <strong>Commentaire :</strong> ${fb.comment || "<em>Pas de commentaire</em>"}<br>
+          <strong>Utilisateur :</strong> ${fb.username}<br>
+          <strong>Créé le :</strong> ${new Date(fb.createdAt).toLocaleDateString()}
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    fetchFeedbacks();
+  </script>
+</body>
+</html>
