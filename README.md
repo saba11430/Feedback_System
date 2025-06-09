@@ -36,7 +36,12 @@ L’objectif est de développer un web service permettant :
   - `createFeedback(username, productName, rating, comment)` : ajouter un feedback
 
 ---
+### 💡 Remarque
 
+Les **mutations** et **requêtes GraphQL** peuvent être testées de deux façons :  
+- Directement via l'**interface GraphiQL** (souvent disponible sur `http://localhost:4000/graphql`)  
+- Ou via un **frontend simple** (ex. : formulaire HTML + fetch JavaScript)  
+👉 Cela permet de **faciliter les tests** et **éviter d'écrire manuellement** des mutations complètes à chaque fois.
 ## 2. 📊 Diagrammes
 
 ### 📘 Diagramme de classes / Entités
@@ -157,12 +162,3 @@ mutation {
   }
 }
 ```
-
----
-
-### 💡 Remarque
-
-Les **mutations** et **requêtes GraphQL** peuvent être testées de deux façons :  
-- Directement via l'**interface GraphiQL** (souvent disponible sur `http://localhost:4000/graphql`)  
-- Ou via un **frontend simple** (ex. : formulaire HTML + fetch JavaScript)  
-👉 Cela permet de **faciliter les tests** et **éviter d'écrire manuellement** des mutations complètes à chaque fois.
