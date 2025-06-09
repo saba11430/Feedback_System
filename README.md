@@ -4,6 +4,7 @@
 ## 1. ✅ Solution proposée
 
 ### 🔍 Analyse du problème
+Les entreprises ont besoin de centraliser les avis de leurs utilisateurs afin d’améliorer leurs produits. Ce système permet aux utilisateurs de laisser des **feedbacks** sur les produits 
 L’objectif est de développer un web service permettant :
 - La gestion d’utilisateurs
 - L’ajout de produits
@@ -22,13 +23,17 @@ L’objectif est de développer un web service permettant :
 - Chaque feedback est lié à un utilisateur et un produit
 
 ### 🧩 Liste des fonctionnalités (sous forme de web service GraphQL)
-- Ajouter un utilisateur
-- Ajouter un produit
-- Ajouter un feedback
-- Récupérer la liste des utilisateurs
-- Récupérer la liste des produits
-- Récupérer les feedbacks
-- Filtrer les feedbacks par produit
+
+**Query :**
+  - `users` : récupérer tous les utilisateurs
+  - `products` : récupérer tous les produits
+  - `feedbacks` : récupérer tous les feedbacks
+  - `feedbacksByProduct(productName: String!)` : feedbacks liés à un produit
+
+- **Mutation :**
+  - `createUser(username, email)` : ajouter un utilisateur
+  - `createProduct(name, description, version)` : ajouter un produit
+  - `createFeedback(username, productName, rating, comment)` : ajouter un feedback
 
 ---
 
@@ -52,8 +57,39 @@ Feedback
  └─ rating: Int
  └─ comment: String
 ```
+---
 
-### 🔁 Schéma des requêtes & réponses (GraphQL)
+## . 🛠️ Implémentation technique
+Web service : GraphQL via Apollo Server
+
+Back-end : Node.js + Express
+
+Base de données : MongoDB
+
+Front-end : Interface simple HTML/JS pour soumettre et voir les feedbacks
+
+Structure :
+├── frontend/
+│   ├── index.html
+│   ├── user.html
+│   ├── product.html
+│   ├── feedback.html
+│   └── view_feedback.html
+├── models/
+│   ├── User.js
+│   ├── Product.js
+│   └── Feedback.js
+├── resolvers
+│      └──  resolvers.js
+├── schemas
+│      └──  typeDefs.js
+│   
+├── index.js
+├── config.js
+└── README.md
+
+---
+### 3 🔁 Schéma des requêtes & réponses (GraphQL)
 
 #### Exemple Mutation :
 ```graphql
@@ -77,22 +113,7 @@ mutation {
 }
 ```
 
----
-
-## 3. ⚙️ Implémentation technique
-
-- **Technologie utilisée** : GraphQL (via Apollo Server Express)
-- **Base de données** : MongoDB (via Mongoose)
-- **Backend** : Node.js / Express.js
-- **Organisation** :
-  - `/models` : Schémas Mongoose
-  - `/resolvers.js` : Résolveurs GraphQL
-  - `/schema.js` : Schéma GraphQL
-  - `/server.js` : Lancement du serveur
-
----
-
-## 4. 📚 Documentation
+## .4 📚 Documentation
 
 ### 🔍 Description du schéma GraphQL
 
