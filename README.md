@@ -1,5 +1,5 @@
 
-# 🛠️ Web Service GraphQL - Feedback App
+# 🛠️ Web Service GraphQL - Feedback system
 
 ## 1. ✅ Solution proposée
 
