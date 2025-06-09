@@ -26,13 +26,41 @@ Relations :
   - `createProduct(name, description, version)` : ajouter un produit
   - `createFeedback(username, productName, rating, comment)` : ajouter un feedback
 
----
+# 🛠️ Implémentation technique
+
+Web service : GraphQL via Apollo Server
+
+Back-end : Node.js + Express
+
+Base de données : MongoDB
+
+Front-end : Interface simple HTML/JS pour soumettre et voir les feedbacks
+
+📁 Structure propre :
+
+├── frontend/
+│   ├── index.html
+│   ├── user.html
+│   ├── product.html
+│   ├── feedback.html
+│   └── view_feedback.html
+├── models/
+│   ├── User.js
+│   ├── Product.js
+│   └── Feedback.js
+├── resolvers/
+│   └── resolvers.js
+├── schemas/
+│   └── typeDefs.js
+├── index.js
+├── config.js
+└── .env
+
 
 ## 2. 🧾 Diagrammes
 
 ### 📦 Diagramme de classes (entités)
 
-```plaintext
 User
  ├── id: ID
  ├── username: String
@@ -54,15 +82,6 @@ Feedback
  ├── comment: String
  └── createdAt: String
 
-# 🛠️ Implémentation technique
-
-Web service : GraphQL via Apollo Server
-
-Back-end : Node.js + Express
-
-Base de données : MongoDB
-
-Front-end : Interface simple HTML/JS pour soumettre et voir les feedbacks
 
 
 # 🧾 Documentation
@@ -103,6 +122,12 @@ query {
   }
 }
 
+# 💡 Remarque
+Les mutations et requêtes GraphQL peuvent être testées de deux façons :
 
+Directement via l'interface GraphiQL (souvent disponible sur http://localhost:4000/graphql)
+
+Ou via un frontend simple (ex. : formulaire HTML + fetch JavaScript)
+👉 Cela permet de faciliter les tests et éviter d'écrire manuellement des mutations complètes à chaque fois.
 
 
